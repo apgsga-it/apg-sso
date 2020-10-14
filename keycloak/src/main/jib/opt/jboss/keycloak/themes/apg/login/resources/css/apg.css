@@ -1,0 +1,54 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Frutiger, "Helvetica Neue", Arial, sans-serif;
+    background: #ffffff !important;
+}
+
+div#kc-header {
+    margin-top: 40px;
+    height: 90px;
+    background-image: url(../img/apg-logo.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 250px;
+}
+
+div#kc-header-wrapper {
+    display: none;
+}
+
+.btn-primary {
+    background-color: #e60000;
+    background-image: none !important;
+    border: 0;
+    color: #fff;
+    text-transform: uppercase;
+    border-radius: 3px;
+}
+
+.btn-primary:active, .btn-primary:hover, .btn-primary:focus, .btn-primary[disabled] {
+    background-color: #b30000 !important;
+    background-image: none !important;
+    border: 0 !important;
+    color: #fff !important;
+}
+
+.login-pf a, .login-pf a:visited {
+    color: #e60000;
+}
+
+.login-pf a:active, .login-pf a:hover {
+    color: #b30000;
+}
+
+.alert-error {
+    border-color: #e60000;
+}
+
+.pficon-error-circle-o:before {
+    color: #e60000;
+}

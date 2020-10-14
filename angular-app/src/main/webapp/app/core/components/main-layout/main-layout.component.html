@@ -1,0 +1,29 @@
+<mat-toolbar color="primary" class="header">
+    <button type="button"
+            aria-label="Toggle sidenav"
+            mat-icon-button
+            (click)="drawer.toggle()"
+            *ngIf="(isSmallDevice$ | async)"
+            #sidenavToggleButton>
+        <mat-icon aria-label="Side nav toggle icon">{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
+    </button>
+    <div class="spacer"></div>
+    <img class="logo clickable" routerLink="/" src="../../../../assets/apg-logo-small-white.png" alt="logo">
+    <div class="spacer"></div>
+    <apg-profile-menu></apg-profile-menu>
+</mat-toolbar>
+<div class="header-shadow"></div>
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer
+                 class="sidenav"
+                 [disableClose]="(isSmallDevice$ | async) === false"
+                 [attr.role]="(isSmallDevice$ | async) ? 'dialog' : 'navigation'"
+                 [mode]="(isSmallDevice$ | async) ? 'over' : 'side'"
+                 [opened]="(isSmallDevice$ | async) === false">
+        <apg-main-navigation (navigationItemClicked)="isSmallDevice && drawer.toggle() && blurSidenavToggleButton()"></apg-main-navigation>
+        <div class="apg-caption version" *apgHasAnyAuthority="'BASISROLLE'">Version {{apgApplicationVersion}}</div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

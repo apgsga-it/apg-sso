@@ -1,0 +1,3 @@
+<mat-nav-list disableRipple="true" class="main-navigation">
+    <a *ngFor="let navigationItem of accessibleNavigationItems" mat-list-item routerLinkActive="active" (click)="handleClick()" [routerLink]="['/', navigationItem.target]">{{navigationItem.name}}</a>
+</mat-nav-list>

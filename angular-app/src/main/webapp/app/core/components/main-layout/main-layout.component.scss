@@ -1,0 +1,53 @@
+@import '../../../../styles/colors';
+
+$header-height: 64px;
+
+.header {
+    height: $header-height;
+    justify-content: center;
+
+    .spacer {
+        flex-grow: 1;
+    }
+
+    .logo {
+        width: 150px;
+    }
+}
+
+.sidenav-container {
+    height: calc(100% - #{$header-height});
+
+    .sidenav {
+        width: 200px;
+        border-right: 1px solid $light-grey;
+
+        apg-main-navigation {
+            padding: 15px 0;
+            position: relative;
+            overflow: auto;
+            height: 100%;
+        }
+
+        div.version {
+            border-top: 1px solid $light-grey;
+            padding: 5px 30px;
+        }
+    }
+
+    mat-sidenav-content {
+        padding: 0 20px;
+        background-color: white;
+    }
+}
+
+::ng-deep .sidenav-container {
+    .mat-drawer-inner-container {
+        display: flex;
+        flex-direction: column;
+
+        .mat-nav-list .mat-list-item, .mat-nav-list .mat-list-option {
+            width: unset;
+        }
+    }
+}

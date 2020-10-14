@@ -1,0 +1,27 @@
+echo
+echo
+echo APG SETUP: Starting
+echo using ${env.JBOSS_HOME}/standalone/configuration/standalone-ha.xml
+
+embed-server --server-config=standalone-ha.xml --std-out=echo
+
+echo
+echo APG SETUP: Begin Keycloak configuration...
+
+echo
+echo APG SETUP: Logging
+/subsystem=logging/logger=ch.apg.sso.keycloak.storage:add(category=ch.apg.sso.keycloak.storage, use-parent-handlers=true, level=DEBUG)
+
+echo
+echo APG SETUP: User Storage Provider
+# Add dedicated storeage spi config element to allow configuring elements.
+/subsystem=keycloak-server/spi=storage:add()
+/subsystem=keycloak-server/spi=storage/provider=apg-oracle-user-storage-provider:add(enabled=true)
+/subsystem=keycloak-server/spi=storage/provider=apg-oracle-user-storage-provider:write-attribute(name=properties.dbUrl,value=dbUrlValue)
+/subsystem=keycloak-server/spi=storage/provider=apg-oracle-user-storage-provider:write-attribute(name=properties.dbUser,value=dbUserValue)
+/subsystem=keycloak-server/spi=storage/provider=apg-oracle-user-storage-provider:write-attribute(name=properties.dbPassword,value=dbPasswordValue)
+/subsystem=keycloak-server/spi=storage/provider=apg-oracle-user-storage-provider:write-attribute(name=properties.dbProxyUsername,value=dbProxyUsernameValue)
+
+echo APG SETUP: Completed
+echo
+echo

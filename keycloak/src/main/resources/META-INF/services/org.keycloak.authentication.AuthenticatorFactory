@@ -1,0 +1,2 @@
+ch.apg.sso.keycloak.authentication.authenticators.browser.ApgUsernamePasswordFormFactory
+ch.apg.sso.keycloak.authentication.authenticators.browser.ApgAccessTokenRequestParamAuthenticatorFactory

@@ -1,0 +1,49 @@
+@import 'colors';
+
+// global styles
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Frutiger, "Helvetica Neue", Arial, sans-serif;
+}
+
+*:focus {
+    outline: none;
+}
+
+// typography
+.apg-huge-title {
+    font-size: 30px;
+    line-height: 45px;
+    font-weight: bold;
+}
+
+.apg-small-title {
+    font-size: 17px;
+    line-height: 21px;
+}
+
+.apg-caption {
+    font-size: 12px;
+    color: $grey
+}
+
+.apg-link {
+    color: $apg-red;
+
+    &:visited {
+        color: $apg-red;
+    }
+
+    &:active, &:hover {
+        color: $apg-dark-red
+    }
+}
+
+// utils
+.clickable {
+    cursor: pointer;
+}

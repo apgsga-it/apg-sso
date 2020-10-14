@@ -1,0 +1,15 @@
+.card {
+    max-width: 600px;
+    width: calc(100vw - 80px);
+    margin: auto;
+    top: 10vh;
+
+    .logo-container {
+        width: 210px;
+        margin: 0 auto 25px auto;
+    }
+
+    button[type=submit] {
+        margin-top: 10px;
+    }
+}

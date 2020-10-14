@@ -1,0 +1,15 @@
+.error-card-content {
+    text-align: center;
+
+    .error-description {
+        padding: 20px 0;
+    }
+
+    .mat-raised-button {
+        margin: 20px 0;
+
+        &:not(:last-child) {
+            margin-right: 10px;
+        }
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "name": "apg-sso-angular-app",
+    "version": "0.1.0-SNAPSHOT",
+    "scripts": {
+        "ng": "ng",
+        "start": "ng serve --proxy-config proxy-config.json --host 0.0.0.0 --live-reload false --disable-host-check",
+        "startES5": "ng serve --configuration es5 --proxy-config proxy-config.json --host 0.0.0.0 --live-reload false --disable-host-check",
+        "startProd": "ng serve --prod --proxy-config proxy-config.json --host 0.0.0.0 --live-reload false --disable-host-check",
+        "build": "ng build",
+        "prod": "ng build --prod",
+        "test": "ng test",
+        "testContinuous": "ng test --no-watch --browsers PhantomJS",
+        "lint": "ng lint"
+    },
+    "private": true,
+    "dependencies": {
+        "@angular/animations": "10.0.8",
+        "@angular/cdk": "10.1.3",
+        "@angular/common": "10.0.8",
+        "@angular/compiler": "10.0.8",
+        "@angular/core": "10.0.8",
+        "@angular/forms": "10.0.8",
+        "@angular/material": "10.1.3",
+        "@angular/platform-browser": "10.0.8",
+        "@angular/platform-browser-dynamic": "10.0.8",
+        "@angular/router": "10.0.8",
+        "keycloak-angular": "8.0.1",
+        "keycloak-js": "11.0.2",
+        "rxjs": "6.6.2",
+        "tslib": "^2.0.1",
+        "zone.js": "0.10.3"
+    },
+    "devDependencies": {
+        "@angular-devkit/build-angular": "~0.1000.5",
+        "@angular/cli": "10.0.5",
+        "@angular/compiler-cli": "10.0.8",
+        "@angular/language-service": "10.0.8",
+        "@types/node": "14.0.27",
+        "codelyzer": "^6.0.0",
+        "ts-node": "8.10.2",
+        "tslint": "~6.1.3",
+        "typescript": "3.9.7"
+    }
+}

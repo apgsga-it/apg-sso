@@ -1,0 +1,10 @@
+{
+    "themes": [
+        {
+            "name": "apg",
+            "types": [
+                "login"
+            ]
+        }
+    ]
+}

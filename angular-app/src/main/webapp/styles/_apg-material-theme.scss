@@ -1,0 +1,40 @@
+@import '~@angular/material/theming';
+@import 'colors';
+
+@include mat-core();
+
+$apg-primary-colors: (
+    100: rgba(152, 56, 38, 0.14),
+    500: $apg-red,
+    700: #7C0F16,
+    contrast: (
+        100: $black-87-opacity,
+        500: $white-87-opacity,
+        700: $white-87-opacity
+    )
+);
+
+$apg-accent-colors: (
+    100: #D2995E,
+    500: $apg-dark-orange,
+    700: #6F3C13,
+    contrast: (
+        100: $black-87-opacity,
+        500: $white-87-opacity,
+        700: $white-87-opacity,
+    )
+);
+
+$apg-warn-palette: mat-palette($apg-primary-colors);
+
+$apg-primary-palette: mat-palette($apg-primary-colors);
+$apg-accent-colors: mat-palette($apg-accent-colors);
+$apg-theme: mat-light-theme($apg-primary-palette, $apg-accent-colors, $apg-warn-palette);
+
+@include angular-material-theme($apg-theme);
+
+$apg-typography: mat-typography-config(
+    $font-family: 'Frutiger, "Helvetica Neue", Arial, sans-serif'
+);
+
+@include mat-core($apg-typography);

@@ -1,0 +1,20 @@
+// primary APG colors
+$apg-red: #c31423;
+$apg-dark-red: #820028;
+
+// additional APG colors
+$apg-beige: #d7cdb9;
+$apg-light-orange: #dca023;
+$apg-wine-red: #a51641;
+$apg-brown: #641e00;
+$apg-light-beige: #ebebe1;
+$apg-dark-orange: #d27323;
+
+// additional colors
+$light-grey: #e4e1e1;
+$grey: rgba(0, 0, 0, 0.54);
+$black: #000000;
+
+.color-primary {
+    color: $apg-red
+}

@@ -1,0 +1,30 @@
+<div>
+    <button type="button"
+            aria-label="Toggle profile menu"
+            mat-icon-button
+            [matMenuTriggerFor]="menu">
+        <mat-icon aria-label="Profile menu toggle icon">person</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" [overlapTrigger]="false">
+        <a *ngIf="!principal.isAuthenticated()" mat-menu-item (click)="login()">
+            <mat-icon>exit_to_app</mat-icon>
+            Anmelden
+        </a>
+
+        <div *ngIf="principal.isAuthenticated()" class="account-container">
+            <mat-icon fxFlexAlign="center">account_circle</mat-icon>
+            <div class="user-info">
+                <div *ngIf="principal.accountDTO!.firstName || principal.accountDTO!.lastName" class="apg-small-title">{{principal.accountDTO!.firstName}} {{principal.accountDTO!.lastName}}</div>
+                <div [ngClass]="{'apg-caption': principal.accountDTO!.firstName || principal.accountDTO!.lastName, 'apg-small-title': !principal.accountDTO!.firstName && !principal.accountDTO!.lastName}"
+                >{{principal.accountDTO!.username}}</div>
+            </div>
+        </div>
+
+        <mat-divider *ngIf="principal.isAuthenticated()"></mat-divider>
+
+        <a *ngIf="principal.isAuthenticated()" mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            Abmelden
+        </a>
+    </mat-menu>
+</div>

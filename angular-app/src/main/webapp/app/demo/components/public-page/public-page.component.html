@@ -1,0 +1,17 @@
+<h1 class="apg-huge-title">{{getPageTitle()}}</h1>
+
+<p *ngIf="!principal.isAuthenticated()">
+    Momentan ist kein Benutzer angemeldet.
+</p>
+<p *ngIf="!principal.isAuthenticated()">
+    <a class="apg-link clickable" (click)="login()">anmelden</a>
+</p>
+<p *ngIf="principal.isAuthenticated()">
+    Momentan ist der Benutzer {{principal.accountDTO!.username}} mit {{getAuthorities()}} angemeldet.
+</p>
+<p *apgHasAnyAuthority="'BASISROLLE'">
+    Als Benutzer mit der Rolle {{baseAuthority}} haben Sie Zugriff auf weitere Funktionen.
+</p>
+<p *ngIf="principal.isAuthenticated()">
+    <a class="apg-link clickable" (click)="logout()">abmelden</a>
+</p>

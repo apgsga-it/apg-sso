@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <module name="org.keycloak.keycloak-services"/>
+            <module name="com.oracle.jdbc"/>
+            <module name="org.apache.commons.lang3"/>
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

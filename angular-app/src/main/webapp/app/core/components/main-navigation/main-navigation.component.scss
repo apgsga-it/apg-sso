@@ -1,0 +1,28 @@
+@import '../../../../styles/colors';
+
+.mat-nav-list {
+    padding-top: 0;
+
+    > *:not(:last-child):after {
+        content: "";
+        position: absolute;
+        left: 30px;
+        right: 30px;
+        border-top: 1px solid $light-grey;
+    }
+
+    .mat-list-item {
+        color: $grey;
+        padding: 0 15px;
+
+        &.active {
+            color: $apg-red;
+            font-weight: 500;
+        }
+    }
+
+}
+
+::ng-deep .main-navigation .mat-list-item-focus {
+    background-color: transparent !important;
+}

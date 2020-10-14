@@ -1,0 +1,42 @@
+logging:
+    pattern:
+        console: "%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%20.20t|%25.-25mdc{username}]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+spring:
+    application:
+        name: apg-sso-vaadin8-app
+    profiles:
+        # The commented value for `active` can be replaced with valid Spring profiles to load.
+        # Otherwise, it will be filled in by maven when building the WAR file
+        # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+        active: #spring.profiles.active#
+    security:
+        oauth2:
+            client:
+                provider:
+                    keycloak:
+                        issuer-uri: http://keycloak.local:8080/auth/realms/apg
+                        user-name-attribute: preferred_username
+                registration:
+                    keycloak:
+                        client-id: apg-sso-vaadin8-app
+
+server:
+    port:
+        8081
+    servlet:
+        session:
+            cookie:
+                http-only: true
+            timeout: 30m
+
+# ===================================================================
+# APG specific properties
+# ===================================================================
+apg:
+    version: @project.version@
+    security:
+        oauth2:
+            audience:
+                - account
+                - api://default

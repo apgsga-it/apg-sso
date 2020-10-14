@@ -1,0 +1,9 @@
+<apg-card-layout>
+    <div class="error-card-content">
+        <div class="apg-huge-title">{{errorTitle}}</div>
+        <div class="error-description" [innerHTML]="errorDescription"></div>
+
+        <button mat-raised-button color="primary" routerLink="/">Zurück zur Startseite</button>
+        <button *ngIf="showLogoutButton" mat-raised-button (click)="logout()">Abmelden</button>
+    </div>
+</apg-card-layout>

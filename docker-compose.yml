@@ -1,0 +1,41 @@
+version: '2'
+services:
+    keycloak:
+        image: apg-sso/keycloak:latest
+        command:
+          ['-b',
+           '0.0.0.0',
+           '-Dkeycloak.migration.action=import',
+           '-Dkeycloak.migration.provider=dir',
+           '-Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config',
+           '-Dkeycloak.migration.strategy=OVERWRITE_EXISTING',
+           '-Dkeycloak.profile.feature.upload_scripts=enabled'
+          ]
+        environment:
+            - KEYCLOAK_USER=admin
+            - KEYCLOAK_PASSWORD=admin
+            - DB_VENDOR=h2
+            - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -server -Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
+        ports:
+            - 8080:8080
+            - 8443:8443
+            - 9990:9990
+            - 5005:5005
+    vaadin8-app:
+        image: apg-sso/vaadin8-app:latest
+        environment:
+            - JAVA_OPTS=-Xmx512m -Xms256m
+            - APP_SLEEP=45 # gives time for other services to boot before the application
+        ports:
+            - 8081:8081
+        links:
+            - "keycloak:keycloak.local"
+    angular-app:
+        image: apg-sso/angular-app:latest
+        environment:
+            - JAVA_OPTS=-Xmx512m -Xms256m
+            - APP_SLEEP=45 # gives time for other services to boot before the application
+        ports:
+            - 8082:8082
+        links:
+            - "keycloak:keycloak.local"
