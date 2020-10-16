@@ -24,7 +24,7 @@ pipeline {
 			    withMaven(
 			        maven: 'apache-maven-3.6.3'
 			    ) {
-                    sh "( cd apg-sso/keycloak && chmod +x mvnw && mvn clean verify -DskipTests -Ptar-build)"
+                    sh "( whoami && pwd && cd keycloak && mvn clean verify -DskipTests -Ptar-build)"
 			    }           
             }
         }
