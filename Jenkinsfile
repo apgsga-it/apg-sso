@@ -31,6 +31,7 @@ pipeline {
                 sh "( scp -B -o StrictHostKeyChecking=no keycloak/target/jib-image.tar dockerbuild-dev@lxpwi072.apgsga.ch:/var/opt/apg-keycloak/ )"
                 sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch ls -al /var/opt/apg-keycloak/ )"
                 sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch docker load -i /var/opt/apg-keycloak/jib-image.tar )"
+                sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch docker rmi dockerregistry.apgsga.ch:5000/apgsga/keycloak:dev -f )"
                 sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch docker tag apg-sso/keycloak dockerregistry.apgsga.ch:5000/apgsga/keycloak:dev )"
                 sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch docker push dockerregistry.apgsga.ch:5000/apgsga/keycloak:dev )"
             }
