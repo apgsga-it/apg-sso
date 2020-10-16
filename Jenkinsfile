@@ -19,14 +19,6 @@ pipeline {
             }
         }
 
-    	stage("checkout") {
-    		steps {
-                script {
-                    sh "( cvs -d:ext:svcCvsClient@cvs-t.apgsga.ch:/var/local/cvs/root co apg-sso )"
-                }
-    		}
-    	}
-
         stage("build keycloak") {
             steps {
 			    withMaven(
