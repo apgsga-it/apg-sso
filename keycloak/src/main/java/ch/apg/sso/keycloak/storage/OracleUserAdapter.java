@@ -73,8 +73,8 @@ public class OracleUserAdapter extends AbstractUserAdapterFederatedStorage {
         MultivaluedHashMap<String, String> all = new MultivaluedHashMap<>();
         all.putAll(attrs);
         all.addAll("apg-roles", oracleUserDTO.getRoles());
-        all.add("subjOid", oracleUserDTO.getSubjOid());
-        all.add("gepardNr", oracleUserDTO.getGepardNr());
+        all.addAll("subjOid", oracleUserDTO.getSubjOid());
+        all.addAll("gepardNr", oracleUserDTO.getGepardNr());
         return all;
     }
 

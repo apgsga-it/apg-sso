@@ -77,7 +77,7 @@ public class UserService {
             account.setSubjOid((String) attributes.get("subjOid"));
         }
         if (attributes.get("gepardNr") != null) {
-            account.setGepardNr((String) attributes.get("subjOid"));
+            account.setGepardNr((String) attributes.get("gepardNr"));
         }
         account.setAuthorities(authorities.stream().map(grantedAuthority -> AuthorityConstant.valueOf(grantedAuthority.getAuthority())).collect(Collectors.toSet()));
         return account;
