@@ -1,5 +1,6 @@
 package ch.apg.sso.keycloak.storage;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -141,8 +142,8 @@ public class DbConnectionCHEI212Test {
             properties.put(OracleConnection.PROXY_USER_NAME, dbProxyUsername);
             oracleConnection.openProxySession(OracleConnection.PROXYTYPE_USER_NAME, properties);
 
-            String emailToUserQuery = "SELECT username, e_mail_1, kombi_name, rollen FROM gepard_to_anwender_modus_f WHERE LOWER(?) = LOWER(e_mail_1) AND modus = 0";
-            String userToEmailQuery = "SELECT username, e_mail_1, kombi_name, rollen FROM gepard_to_anwender_modus_f WHERE UPPER(?) = UPPER(username)";
+            String emailToUserQuery = "SELECT username, e_mail_1, kombi_name, rollen, subj_oid, geschaeftspartner_nr FROM gepard_to_anwender_modus_f WHERE LOWER(?) = LOWER(e_mail_1) AND modus = 0";
+            String userToEmailQuery = "SELECT username, e_mail_1, kombi_name, rollen, subj_oid, geschaeftspartner_nr FROM gepard_to_anwender_modus_f WHERE UPPER(?) = UPPER(username)";
             boolean isEmail = username.contains("@");
             String query = (isEmail ? emailToUserQuery : userToEmailQuery);
 
@@ -156,7 +157,9 @@ public class DbConnectionCHEI212Test {
                     resultSet.getString("username"),
                     resultSet.getString("kombi_name"),
                     resultSet.getString("e_mail_1"),
-                    resultSet.getString("rollen")
+                    resultSet.getString("rollen"),
+                    resultSet.getLong("subj_oid"),
+                    resultSet.getLong("geschaeftspartner_nr")
                 );
             } else {
                 return null;

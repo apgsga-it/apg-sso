@@ -21,7 +21,9 @@ public class OracleUserRepository {
     private static final String DB_ATTRIBUTE_EMAIL = "e_mail_1";
     private static final String DB_ATTRIBUTE_DISPLAY_NAME = "kombi_name";
     private static final String DB_ATTRIBUTE_ROLES = "rollen";
-    private static final String DB_ATTRIBUTES = StringUtils.join(Arrays.asList(DB_ATTRIBUTE_USERNAME, DB_ATTRIBUTE_EMAIL, DB_ATTRIBUTE_DISPLAY_NAME, DB_ATTRIBUTE_ROLES), ", ");
+    private static final String DB_ATTRIBUTE_SUBJ_OID = "subj_oid";
+    private static final String DB_ATTRIBUTE_GEPARD_NR = "geschaeftspartner_nr";
+    private static final String DB_ATTRIBUTES = StringUtils.join(Arrays.asList(DB_ATTRIBUTE_USERNAME, DB_ATTRIBUTE_EMAIL, DB_ATTRIBUTE_DISPLAY_NAME, DB_ATTRIBUTE_ROLES, DB_ATTRIBUTE_SUBJ_OID, DB_ATTRIBUTE_GEPARD_NR), ", ");
     private static final Logger log = Logger.getLogger(OracleUserRepository.class);
 
     private final OracleUserStorageProviderConfig oracleUserStorageProviderConfig;
@@ -101,7 +103,9 @@ public class OracleUserRepository {
                 resultSet.getString("username"),
                 resultSet.getString("kombi_name"),
                 resultSet.getString("e_mail_1"),
-                resultSet.getString("rollen")
+                resultSet.getString("rollen"),
+                resultSet.getLong("subj_oid"),
+                resultSet.getLong("geschaeftspartner_nr")
             );
         } else {
             return null;
