@@ -24,10 +24,11 @@ services:
     vaadin8-app:
         image: apg-sso/vaadin8-app:latest
         environment:
-            - JAVA_OPTS=-Xmx512m -Xms256m
+            - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 -Xmx512m -Xms256m
             - APP_SLEEP=45 # gives time for other services to boot before the application
         ports:
             - 8081:8081
+            - 5006:5006
         links:
             - "keycloak:keycloak.local"
     angular-app:
