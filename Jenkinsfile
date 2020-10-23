@@ -19,23 +19,22 @@ pipeline {
             }
         }
 
-    	stage("checkout") {
-    		steps {
-                script {
-                    sh "( cvs -d:ext:svcCvsClient@cvs-t.apgsga.ch:/var/local/cvs/root co apg-sso )"
-                }
-    		}
-    	}
-
         stage("build keycloak") {
             steps {
 			    withMaven(
 			        maven: 'apache-maven-3.6.3'
 			    ) {
-                    sh "( cd apg-sso/keycloak && chmod +x mvnw && mvn clean verify -DskipTests -Ptar-build)"
+                    echo "Compile KeyCloak producing Java Image Builder File"
+                    sh "( whoami && pwd && cd keycloak && mvn clean verify -DskipTests -Ptar-build)"
 			    }           
+                echo "Build Docker Image from Java Image Builder File and Push to Docker Registry"
+                sh "( scp -B -o StrictHostKeyChecking=no keycloak/target/jib-image.tar dockerbuild-dev@lxpwi072.apgsga.ch:/var/opt/apg-keycloak/ )"
+                sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch ls -al /var/opt/apg-keycloak/ )"
+                sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch docker load -i /var/opt/apg-keycloak/jib-image.tar )"
+                sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch docker rmi dockerregistry.apgsga.ch:5000/apgsga/keycloak:dev -f )"
+                sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch docker tag apg-sso/keycloak dockerregistry.apgsga.ch:5000/apgsga/keycloak:dev )"
+                sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@lxpwi072.apgsga.ch docker push dockerregistry.apgsga.ch:5000/apgsga/keycloak:dev )"
             }
         }
     }
-
 }
