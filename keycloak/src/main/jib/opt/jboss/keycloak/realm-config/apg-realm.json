@@ -1506,7 +1506,7 @@
                         "true"
                     ],
                     "dbUrl": [
-                        "jdbc:oracle:thin:@chei211.apgsga.ch:1521:chei211"
+                        "jdbc:oracle:thin:@chei212.apgsga.ch:1521:chei212"
                     ],
                     "dbPassword": [
                         "xs_proxy_pass"
