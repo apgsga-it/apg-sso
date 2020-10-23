@@ -35,7 +35,7 @@ public class ConfigurationService {
     public SalesConfigurationDTO getSalesConfiguration() {
         if (ApgSecurityUtils.hasCurrentUserAnyAuthority(AuthorityConstant.VERKAUF)) {
             return new SalesConfigurationDTO(
-                "Der Benutzer " + userService.getCurrentAccount().getUsername() + " besitzt die Rolle " + AuthorityConstant.VERKAUF.name() + "!"
+                "Der Benutzer " + userService.getCurrentAccount().getUsername() + " besitzt die Rolle " + AuthorityConstant.VERKAUF.name() + "!" + "\n" + userService.getCurrentAccount()
             );
         } else {
             return new SalesConfigurationDTO(
