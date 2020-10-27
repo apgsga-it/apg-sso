@@ -29,9 +29,9 @@ pipeline {
         stage("setup") {
             steps {
                 echo "make sure the target exists"
-                sh "( ssh -o StrictHostKeyChecking=no ${targetUser}@${targetHost} if [ ! -d ${targetKeyCloakBase} ]; then mkdir ${targetKeyCloakBase}; else echo nothing to do; fi )"
+                sh "( ssh -o StrictHostKeyChecking=no ${targetUser}@${targetHost} if [ ! -d ${targetKeyCloakBase} ]; then mkdir -p ${targetKeyCloakBase}; else echo nothing to do; fi )"
                 echo "make sure there is a cloned git repo"
-                sh "( ssh -o StrictHostKeyChecking=no ${targetUser}@${targetHost} if [ ! -d ${targetKeyCloakHome} ]; then git clone git@gitlab.apgsga.ch:apgsga-ops/apg-keycloak.git; else echo nothing to do; fi )"
+                sh "( ssh -o StrictHostKeyChecking=no ${targetUser}@${targetHost} if [ ! -d ${targetKeyCloakHome} ]; then mkdir -p ${targetKeyCloakHome}; git clone git@gitlab.apgsga.ch:apgsga-ops/apg-keycloak.git ${targetKeyCloakHome}; else echo nothing to do; fi )"
             }
         }
         stage("download project") {
