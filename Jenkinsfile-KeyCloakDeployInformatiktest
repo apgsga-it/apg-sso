@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent master
     
     options {
         timeout(time: 5, unit: "MINUTES")
@@ -13,7 +13,7 @@ pipeline {
                 echo "Node Name: ${env.NODE_NAME}"
                 echo "Executor Number: ${env.EXECUTOR_NUMBER}"
                 echo "Source Branch: ${env.BRANCH_NAME}"
-                sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@dockerbuild.apgsga.ch echo \"Host: \$( hostname ), Docker Version: \$( docker --version )\" )"
+                sh "( ssh -o StrictHostKeyChecking=no dockerbuild-dev@dockerbuild.apgsga.ch echo \"Remote Host: \\\$( hostname ), Docker Version: \\\$( docker --version )\" )"
             }
         }
 
