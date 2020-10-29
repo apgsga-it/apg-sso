@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    
+    environment {
+        myEnvironment="${env.environment}"
+        myReceivers="${env.email}"
+        
+        myURL="https://login-${myEnvironment.toLowerCase()}.apgsga.ch/"
+        myEnvironmentName="IT21 ${myEnvironment.toUpperCase()}"
+        mySubject="APG|SGA ${myEnvironmentName} environment is ready for use"
+        myText="setup of ${myEnvironmentName} has completed.\n\nThe keycloak service should now be available at ${myURL}\n\nkind regards from APG|SGA"
+    }
+     
+    stages {
+        stage('notify') {
+            steps {
+                emailext to: "${myReceivers}", subject: "${mySubject}", body: "${myText}"
+            }
+        }
+    }
+}
