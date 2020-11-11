@@ -14,29 +14,32 @@ pipeline {
 		def sshCommand = "ssh -o StrictHostKeyChecking=no"
     }
 
-    stages {
-        stage("Info") {
-            steps {
-                echo "Node Name: ${env.NODE_NAME}"
-                echo "Executor Number: ${env.EXECUTOR_NUMBER}"
-                echo "Job Name: ${env.JOB_NAME}"
-                echo "URL to this Job: ${env.BUILD_URL}"
-                sh "( ${sshCommand} ${dockerBuildAccess} echo \"Remote Host: \\\$( hostname ), Docker Version: \\\$( docker --version )\" )"
+	stages { 
+        stage("Deploy") { 
+            options {
+    			        lock("apg-keycloak.deploy")
+    			    }
+            stages {
+                stage("Info") {
+                    steps {
+                        echo "Node Name: ${env.NODE_NAME}"
+                        echo "Executor Number: ${env.EXECUTOR_NUMBER}"
+                        echo "Job Name: ${env.JOB_NAME}"
+                        echo "URL to this Job: ${env.BUILD_URL}"
+                        sh "( ${sshCommand} ${dockerBuildAccess} echo \"Remote Host: \\\$( hostname ), Docker Version: \\\$( docker --version )\" )"
+                    }
+                }
+        
+                stage("Docker") {
+                    steps {
+                        echo "make sure we have version ${sourceTag} of the image available in local docker repository"
+                        sh "( ${sshCommand} ${dockerBuildAccess} docker pull ${dockerImageFullName}:${sourceTag} )"
+                        echo "publish the image as version ${targetTag} and deploy to dockerregistry"
+                        sh "( ${sshCommand} ${dockerBuildAccess} docker tag ${dockerImageFullName}:${sourceTag} ${dockerImageFullName}:${targetTag} )"
+                        sh "( ${sshCommand} ${dockerBuildAccess} docker push ${dockerImageFullName}:${targetTag} )"
+                    }
+                }
             }
         }
-
-        stage("Docker") {
-			options {
-				lock(resource: "${dockerImageFullName}:${sourceTag}")
-				lock(resource: "${dockerImageFullName}:${targetTag}")
-			}
-            steps {
-                echo "make sure we have version ${sourceTag} of the image available in local docker repository"
-                sh "( ${sshCommand} ${dockerBuildAccess} docker pull ${dockerImageFullName}:${sourceTag} )"
-                echo "publish the image as version ${targetTag} and deploy to dockerregistry"
-                sh "( ${sshCommand} StrictHostKeyChecking=no ${dockerBuildAccess} docker tag ${dockerImageFullName}:${sourceTag} ${dockerImageFullName}:${targetTag} )"
-                sh "( ${sshCommand} StrictHostKeyChecking=no ${dockerBuildAccess} docker push ${dockerImageFullName}:${targetTag} )"
-            }
-        }
-    }
+	}
 }
