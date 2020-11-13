@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+    
+    options {
+        timestamps()
+    }
+     
+    environment {
+        def myEnvironment="${env.environment}"
+        def sourceTag = "${env.sourceVersion}" 
+        def myReceiversOK="${env.email}"
+        def myReceiversError="${env.emailError}"
+
+        def targetTag = "login-${myEnvironment.toLowerCase()}" 
+        
+        def myURL="https://${targetTag}.apgsga.ch/"
+        def myEnvironmentName="IT21 ${myEnvironment.toUpperCase()}"
+        def mySubject="APG|SGA ${myEnvironmentName} Installation Preparations"
+        def myTextOK="installation on \"${myEnvironmentName}\" has been prepared.\n\nPre-requisites for installation should now be fulfilled\n\nkind regards from Job \"${env.JOB_NAME}\""
+        def myTextERROR="installation preparations on \"${myEnvironmentName}\" had ERRORs.\n\nRefer to Job Log \"${env.BUILD_URL}/consoleFull\" for details.\n\nkind regards from Job \"${env.JOB_NAME}\""
+		def dockerBuildAccess = "dockerbuild-dev@dockerbuild.apgsga.ch"
+		def targetAccess = "apg_sso_install@${targetTag}.apgsga.ch"
+		def dockerImageFullName = "dockerregistry.apgsga.ch:5000/apgsga/keycloak"
+		def sshCommand = "ssh -o StrictHostKeyChecking=no"
+    }
+    
+    stages {
+        stage("info") {
+            steps {
+                echo "Node Name: ${env.NODE_NAME}"
+                echo "Executor Number: ${env.EXECUTOR_NUMBER}"
+                echo "Job Name: ${env.JOB_NAME}"
+                echo "URL to this Job: ${env.BUILD_URL}"
+            }
+        }
+        stage ("deploy") {
+            options {
+		        lock("apg-keycloak.deploy")
+		    }
+            steps {
+                echo "check server access"
+                sh "( ${sshCommand} ${dockerBuildAccess} echo \"Remote Host: \\\$( hostname ), Docker Version: \\\$( docker --version )\" )"
+                echo "make sure we have version ${sourceTag} of the image available in local docker repository"
+                sh "( ${sshCommand} ${dockerBuildAccess} docker pull ${dockerImageFullName}:${sourceTag} )"
+                echo "publish the image as version ${targetTag} and deploy to dockerregistry"
+                sh "( ${sshCommand} ${dockerBuildAccess} docker tag ${dockerImageFullName}:${sourceTag} ${dockerImageFullName}:${targetTag} )"
+                sh "( ${sshCommand} ${dockerBuildAccess} docker push ${dockerImageFullName}:${targetTag} )"
+            }
+        }
+        stage ("install environment") {
+            steps {
+                echo "check server access"
+                sh "${sshCommand} ${targetAccess} echo \"Remote Host: \\\$( hostname ), Docker Version: \\\$( sudo docker-compose --version ), Git Version: \\\$( sudo git --version )\""
+                echo "make sure the infra exists"
+                sh "${sshCommand} ${targetAccess} sudo mkdir -p /etc/opt/apg-keycloak | true"
+                sh "${sshCommand} ${targetAccess} sudo git clone git@gitlab.apgsga.ch:apgsga-ops/apg-keycloak.git /etc/opt/apg-keycloak/${targetTag} | true"
+                sh "${sshCommand} ${targetAccess} sudo chmod 754 /etc/opt/apg-keycloak/${targetTag}/*.sh"
+            }
+        }
+        stage ("download") {
+            steps {
+                echo "do the download"
+                sh "${sshCommand} ${targetAccess} sudo /etc/opt/apg-keycloak/${targetTag}/download.sh"
+            }
+        }
+    }
+    post {
+        success {
+            emailext to: "${myReceiversOK}", subject: "${mySubject} - Status OK", body: "${myTextOK}"
+        }
+        failure {
+            emailext to: "${myReceiversError}", subject: "ERROR: ${mySubject}", body: "${myTextError}"
+        }
+    }
+}

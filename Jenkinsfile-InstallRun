@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+    
+    options {
+        timestamps()
+    }
+     
+    environment {
+        def myEnvironment="${env.environment}"
+        def myReceiversOK="${env.email}"
+        def myReceiversError="${env.emailError}"
+
+        def targetTag = "login-${myEnvironment.toLowerCase()}" 
+        
+        def myURL="https://${targetTag}.apgsga.ch/"
+        def myEnvironmentName="IT21 ${myEnvironment.toUpperCase()}"
+        def mySubject="APG|SGA ${myEnvironmentName} Installation"
+        def myTextOK="installation on \"${myEnvironmentName}\" has been done.\n\nThe keycloak service should now be available at ${myURL}\n\nkind regards from APG|SGA"
+        def myTextERROR="installation on \"${myEnvironmentName}\" has had ERRORs.\n\nRefer to Job Log \"${env.BUILD_URL}/consoleFull\" for details.\n\nkind regards from Job \"${env.JOB_NAME}\""
+		def targetAccess = "apg_sso_install@${targetTag}.apgsga.ch"
+		def dockerImageFullName = "dockerregistry.apgsga.ch:5000/apgsga/keycloak"
+		def sshCommand = "ssh -o StrictHostKeyChecking=no"
+    }
+    
+    stages {
+        stage("info") {
+            steps {
+                echo "Node Name: ${env.NODE_NAME}"
+                echo "Executor Number: ${env.EXECUTOR_NUMBER}"
+                echo "Job Name: ${env.JOB_NAME}"
+                echo "URL to this Job: ${env.BUILD_URL}"
+            }
+        }
+        stage ("install packages") {
+            steps {
+                echo "check server access"
+                sh "${sshCommand} ${targetAccess} echo \"Remote Host: \\\$( hostname ), Docker Version: \\\$( sudo docker-compose --version ), Git Version: \\\$( sudo git --version )\""
+                echo "do the install"
+                sh "${sshCommand} ${targetAccess} sudo /etc/opt/apg-keycloak/${targetTag}/install.sh"
+            }
+        }
+    }
+    post {
+        success {
+            emailext to: "${myReceiversOK}", subject: "${mySubject} - Status OK", body: "${myTextOK}"
+        }
+        failure {
+            emailext to: "${myReceiversError}", subject: "ERROR: ${mySubject}", body: "${myTextError}"
+        }
+    }
+}
