@@ -5,6 +5,10 @@
             <module name="org.keycloak.keycloak-services"/>
             <module name="com.oracle.jdbc"/>
             <module name="org.apache.commons.lang3"/>
+<!--             <module name="com.verifalia.api"/> -->
+<!--             <module name="com.github.verifalia"/> -->
+<!--             <module name="com.github.verifalia.verifalia-java-sdk"/> -->
+<!--             <module name="com.verifalia.api.verifalia-java-sdk"/> -->
         </dependencies>
     </deployment>
 </jboss-deployment-structure>

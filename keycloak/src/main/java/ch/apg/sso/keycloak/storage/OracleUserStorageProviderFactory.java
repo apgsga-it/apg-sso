@@ -79,7 +79,7 @@ public class OracleUserStorageProviderFactory implements UserStorageProviderFact
     private OracleUserStorageProviderConfig getOracleUserStorageProviderConfig(MultivaluedHashMap<String, String> config) {
         OracleUserStorageProviderConfig oracleUserStorageProviderConfig = new OracleUserStorageProviderConfig(config);
         boolean dbPasswordDefined = oracleUserStorageProviderConfig.getDbPassword() != null && !oracleUserStorageProviderConfig.getDbPassword().isEmpty();
-        log.debugv("configured {0} with {1} = {2}, {3} = {4}, {5} defined = {6}, {7} = {8}",
+        log.debugv("configured {0} with {1} = {2}, {3} = {4}, {5} defined = {6}, {7} = {8}, {9} = {10}, {11} = {12}",
                    this,
                    OracleUserStorageProviderConstants.CONFIG_PROPERTY_DB_URL,
                    oracleUserStorageProviderConfig.getDbUrl(),
@@ -88,7 +88,11 @@ public class OracleUserStorageProviderFactory implements UserStorageProviderFact
                    OracleUserStorageProviderConstants.CONFIG_PROPERTY_DB_PASSWORD,
                    dbPasswordDefined,
                    OracleUserStorageProviderConstants.CONFIG_PROPERTY_DB_PROXY_USERNAME,
-                   oracleUserStorageProviderConfig.getDbProxyUsername()
+                   oracleUserStorageProviderConfig.getDbProxyUsername(),
+                   OracleUserStorageProviderConstants.CONFIG_PROPERTY_VERIFALIA_SID,
+                   oracleUserStorageProviderConfig.getVerifaliaSid(),
+                   OracleUserStorageProviderConstants.CONFIG_PROPERTY_VERIFALIA_TOKEN,
+                   oracleUserStorageProviderConfig.getVerifaliaToken()               
         );
         return oracleUserStorageProviderConfig;
     }
@@ -123,6 +127,20 @@ public class OracleUserStorageProviderFactory implements UserStorageProviderFact
                                            .helpText("Username to proxy the connection to the database throw when loading user details")
                                            .type(ProviderConfigProperty.STRING_TYPE)
                                            .defaultValue("PDUSER")
+                                           .add()
+                                           .property()
+                                           .name(OracleUserStorageProviderConstants.CONFIG_PROPERTY_VERIFALIA_SID)
+                                           .label("Verifalia SID")
+                                           .helpText("SID for Verifalia's E-Mail-Checking-Service")
+                                           .type(ProviderConfigProperty.STRING_TYPE)
+                                           .defaultValue("2765cb75f7de472b85842e83c4f1943c")
+                                           .add()
+                                           .property()
+                                           .name(OracleUserStorageProviderConstants.CONFIG_PROPERTY_VERIFALIA_TOKEN)
+                                           .label("Verifalia Token")
+                                           .helpText("Token for Verifalia's E-Mail-Checking-Service")
+                                           .type(ProviderConfigProperty.STRING_TYPE)
+                                           .defaultValue("onvspRsCz7ZHsjj3G2HTNJK8")
                                            .add()
                                            .build();
     }

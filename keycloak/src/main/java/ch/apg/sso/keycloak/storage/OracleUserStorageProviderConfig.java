@@ -24,4 +24,12 @@ public class OracleUserStorageProviderConfig {
     public String getDbProxyUsername() {
         return config.getFirst(OracleUserStorageProviderConstants.CONFIG_PROPERTY_DB_PROXY_USERNAME);
     }
+    
+    public String getVerifaliaSid() {
+        return config.getFirst(OracleUserStorageProviderConstants.CONFIG_PROPERTY_VERIFALIA_SID);
+    }
+
+    public String getVerifaliaToken() {
+        return config.getFirst(OracleUserStorageProviderConstants.CONFIG_PROPERTY_VERIFALIA_TOKEN);
+    }
 }

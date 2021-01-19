@@ -14,14 +14,15 @@ public class OracleUserDTO {
 	private final List<String> roles;
 	private final String subjOid;
 	private final String gepardNr;
+	private boolean enabled = true;
 
-	public OracleUserDTO(String username, String displayName, String email, String roles, Long subjOid,
-			Long gepardNr) {
+	public OracleUserDTO(String username, String displayName, String email, String roles, Long subjOid, Long gepardNr) {
 		this.username = username;
 		this.firstName = StringUtils.isNotBlank(displayName) ? StringUtils.substringBeforeLast(displayName, " ") : null;
 		this.lastName = StringUtils.isNotBlank(displayName) ? StringUtils.substringAfterLast(displayName, " ") : null;
 		this.email = email;
-		this.roles = StringUtils.isNotBlank(roles) ? Arrays.asList(StringUtils.split(roles, ","))
+		this.roles = StringUtils.isNotBlank(roles)
+				? Arrays.asList(StringUtils.split(roles, ","))
 				: Collections.emptyList();
 		this.subjOid = subjOid == null ? null : subjOid.toString();
 		this.gepardNr = gepardNr == null ? null : gepardNr.toString();
@@ -55,9 +56,19 @@ public class OracleUserDTO {
 		return gepardNr;
 	}
 
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+
 	@Override
 	public String toString() {
 		return "OracleUserDTO [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", email=" + email + ", roles=" + roles + ", subjOid=" + subjOid + ", gepardNr=" + gepardNr + "]";
+				+ ", email=" + email + ", roles=" + roles + ", subjOid=" + subjOid + ", gepardNr=" + gepardNr
+				+ ", enabled=" + enabled + "]";
 	}
+
 }

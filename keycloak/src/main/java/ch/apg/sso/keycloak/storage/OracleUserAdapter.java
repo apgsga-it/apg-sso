@@ -22,7 +22,14 @@ public class OracleUserAdapter extends AbstractUserAdapterFederatedStorage {
         this.keycloakId = StorageId.keycloakId(model, oracleUserDTO.getUsername());
     }
 
+    
     @Override
+	public boolean isEnabled() {
+		return oracleUserDTO.isEnabled();
+	}
+
+
+	@Override
     public String getId() {
         return keycloakId;
     }
