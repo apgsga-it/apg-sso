@@ -15,6 +15,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 import org.keycloak.component.ComponentValidationException;
 
+import com.verifalia.api.VerifaliaRestClient;
+import com.verifalia.api.emailvalidations.WaitingStrategy;
+import com.verifalia.api.emailvalidations.models.Validation;
+import com.verifalia.api.emailvalidations.models.ValidationEntry;
+import com.verifalia.api.emailvalidations.models.ValidationEntryClassification;
+
 //import com.verifalia.api.VerifaliaRestClient;
 //import com.verifalia.api.emailvalidations.WaitingStrategy;
 //import com.verifalia.api.emailvalidations.models.Validation;
@@ -46,15 +52,20 @@ public class OracleUserRepository {
 
 	private final OracleDataSource loginOracleDataSource;
 
-//	private VerifaliaRestClient verifaliaClient;
+	private VerifaliaRestClient verifaliaClient = null;
 
 	public OracleUserRepository(OracleUserStorageProviderConfig oracleUserStorageProviderConfig,
 			OracleDataSource loadUserOracleDataSource, OracleDataSource loginOracleDataSource) {
 		this.oracleUserStorageProviderConfig = oracleUserStorageProviderConfig;
 		this.loadUserOracleDataSource = loadUserOracleDataSource;
 		this.loginOracleDataSource = loginOracleDataSource;
-//		this.verifaliaClient = new VerifaliaRestClient(oracleUserStorageProviderConfig.getVerifaliaSid(),
-//				oracleUserStorageProviderConfig.getVerifaliaToken());
+		try {
+			this.verifaliaClient = new VerifaliaRestClient(oracleUserStorageProviderConfig.getVerifaliaSid(),
+					oracleUserStorageProviderConfig.getVerifaliaToken());
+		}
+		catch (Throwable e) {
+			log.error("VerifaliaRestClient not createt, functionality disabled", e);
+		}
 	}
 
 	public int getCount() {
@@ -113,11 +124,10 @@ public class OracleUserRepository {
 
 			OracleUserDTO user = mapDbUser(resultSet);
 
-			if (user != null) {
-//				String verifaliaClassification = validateMailByVerifalia(user.getEmail());
-//				Integer state = checkMail(oracleConnection, user.getEmail(), verifaliaClassification);
-//				user.setEnabled(!(state == 1));
-				user.setEnabled(false);
+			if (user != null && verifaliaClient != null) {
+				String verifaliaClassification = validateMailByVerifalia(user.getEmail());
+				Integer state = checkMail(oracleConnection, user.getEmail(), verifaliaClassification);
+				user.setEnabled(!(state == 1));
 			}
 			return user;
 		}
@@ -156,26 +166,26 @@ public class OracleUserRepository {
 		}
 	}
 
-//	private String validateMailByVerifalia(String email) {
-//		try {
-//			if (email.endsWith("apgsga.ch")) {
-//				return ValidationEntryClassification.Deliverable.toString();
-//			}
-//			Validation validation = verifaliaClient.getEmailValidations().submit(new String[] { email },
-//					new WaitingStrategy(true));
-//			Optional<ValidationEntry> first = validation.getEntries().stream().findFirst();
-//			if (first.isPresent()) {
-//				return first.get().getClassification().toString();
-//			}
-//			return ValidationEntryClassification.Deliverable.toString();
-//		}
-//		catch (Throwable e) {
-//			log.error(
-//					"Exception while checking mail with Verifalia, mail address nevertheless accepted and classified as 'Deliverable'",
-//					e);
-//			return ValidationEntryClassification.Deliverable.toString();
-//		}
-//	}
+	private String validateMailByVerifalia(String email) {
+		try {
+			if (email.endsWith("apgsga.ch")) {
+				return ValidationEntryClassification.Deliverable.toString();
+			}
+			Validation validation = verifaliaClient.getEmailValidations().submit(new String[] { email },
+					new WaitingStrategy(true));
+			Optional<ValidationEntry> first = validation.getEntries().stream().findFirst();
+			if (first.isPresent()) {
+				return first.get().getClassification().toString();
+			}
+			return ValidationEntryClassification.Deliverable.toString();
+		}
+		catch (Throwable e) {
+			log.error(
+					"Exception while checking mail with Verifalia, mail address nevertheless accepted and classified as 'Deliverable'",
+					e);
+			return ValidationEntryClassification.Deliverable.toString();
+		}
+	}
 
 	private Integer checkMail(OracleConnection oracleConnection, String email, String verifaliaClassification) {
 		try {

@@ -98,6 +98,10 @@ public class OracleUserStorageProvider implements UserStorageProvider, UserLooku
             return false;
         }
 
+        if (!user.isEnabled()) {
+        	// Login sinnlos, da locked. Und wir wollen eine andere Meldung.
+        	return true;
+        }
         UserCredentialModel userCredentialModel = (UserCredentialModel) input;
         return oracleUserRepository.authenticate(user.getUsername(), userCredentialModel.getChallengeResponse());
     }

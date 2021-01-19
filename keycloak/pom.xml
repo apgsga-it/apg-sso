@@ -108,6 +108,7 @@
 			<artifactId>verifalia-java-sdk</artifactId>
 			<version>${verifalia.version}</version>
 		</dependency>
+	
 
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

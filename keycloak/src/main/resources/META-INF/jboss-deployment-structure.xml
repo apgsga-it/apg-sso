@@ -5,10 +5,13 @@
             <module name="org.keycloak.keycloak-services"/>
             <module name="com.oracle.jdbc"/>
             <module name="org.apache.commons.lang3"/>
-<!--             <module name="com.verifalia.api"/> -->
-<!--             <module name="com.github.verifalia"/> -->
-<!--             <module name="com.github.verifalia.verifalia-java-sdk"/> -->
-<!--             <module name="com.verifalia.api.verifalia-java-sdk"/> -->
+            <module name="net.sf.json-lib.json-lib"/>
+            <module name="org.projectlombok.lombok"/>
+            <module name="org.codehaus.jackson.jackson-mapper-asl"/>
+            <module name="org.apache.httpcomponents.httpmime"/>
+            <module name="org.apache.httpcomponents.httpclient"/>
+            <module name="com.github.verifalia.verifalia-java-sdk"/>
+            <module name="org.apache.httpcomponents.httpcore"/>
         </dependencies>
     </deployment>
 </jboss-deployment-structure>
