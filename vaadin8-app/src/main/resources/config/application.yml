@@ -20,6 +20,8 @@ spring:
                 registration:
                     keycloak:
                         client-id: apg-sso-vaadin8-app
+                        client-secret: b69e33ac-57ef-4067-ab47-eff72b46368d
+                        client-authentication-method: post
 
 server:
     port:
