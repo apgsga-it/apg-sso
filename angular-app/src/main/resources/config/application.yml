@@ -19,7 +19,13 @@ spring:
                         user-name-attribute: preferred_username
                 registration:
                     keycloak:
-                        client-id: apg-sso-angular-app
+                        client-id: apg-sso-app
+                        scope:
+                            - openid
+                            - profile
+                            - email
+                        authorization-grant-type: authorization_code
+                        client-authentication-method: post
 
 server:
     port:

@@ -1,8 +1,8 @@
 {
-  "realm": "apg",
-  "auth-server-url": "http://keycloak.local:8080/auth/",
-  "ssl-required": "external",
-  "resource": "apg-sso-angular-app",
-  "public-client": true,
-  "confidential-port": 0
+    "realm": "apg",
+    "auth-server-url": "http://keycloak.local:8080/auth/",
+    "ssl-required": "external",
+    "resource": "apg-sso-app",
+    "public-client": true,
+    "confidential-port": 0
 }

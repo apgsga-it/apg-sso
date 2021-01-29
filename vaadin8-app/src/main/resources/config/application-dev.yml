@@ -4,21 +4,20 @@ logging:
         ch.apg.sso: DEBUG
 
 spring:
-    profiles:
-        active: dev
-    jackson:
-        serialization:
-            indent-output: true
+  jackson:
+    serialization:
+      indent-output: true
 
 # ===================================================================
 # APG specific properties
 # ===================================================================
 apg:
-    # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
-    cors:
-        allowed-origins: '*'
-        allowed-methods: '*'
-        allowed-headers: '*'
-        exposed-headers: 'Authorization,Link,X-Total-Count'
-        allow-credentials: true
-        max-age: 1800
+  url: http://localhost:8081
+  # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
+  cors:
+    allowed-origins: '*'
+    allowed-methods: '*'
+    allowed-headers: '*'
+    exposed-headers: 'Authorization,Link,X-Total-Count'
+    allow-credentials: true
+    max-age: 1800

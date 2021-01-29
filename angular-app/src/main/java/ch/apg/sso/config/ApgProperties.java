@@ -1,13 +1,11 @@
 package ch.apg.sso.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.web.cors.CorsConfiguration;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * Properties are configured in the {@code application.yml} file.
@@ -15,6 +13,8 @@ import org.springframework.web.cors.CorsConfiguration;
 @ConfigurationProperties(prefix = "apg", ignoreUnknownFields = false)
 public class ApgProperties {
     private String version;
+
+    private String url;
 
     private final Http http = new Http();
 
@@ -28,6 +28,14 @@ public class ApgProperties {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Http getHttp() {
@@ -79,7 +87,7 @@ public class ApgProperties {
                 return Collections.unmodifiableList(audience);
             }
 
-            public void setAudience(@NotNull List<String> audience) {
+            public void setAudience(List<String> audience) {
                 this.audience.addAll(audience);
             }
         }

@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
@@ -30,6 +31,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import ch.apg.sso.security.ApgSecurityUtils;
@@ -45,29 +47,43 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ApgProperties apgProperties;
 
-    public WebSecurityConfiguration(ApgProperties apgProperties) {
+    private final ClientRegistrationRepository clientRegistrationRepository;
+
+    public WebSecurityConfiguration(ApgProperties apgProperties, ClientRegistrationRepository clientRegistrationRepository) {
         this.apgProperties = apgProperties;
+        this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-            .csrf()
-            .disable()
-            .authorizeRequests()
-            .antMatchers("/**").permitAll()
-            .and()
-            .anonymous()
-            .authorities(AuthorityConstant.ANONYMOUS.name())
-            .and()
-            .oauth2Login()
-            .and()
-            .oauth2ResourceServer()
-            .jwt()
-            .jwtAuthenticationConverter(authenticationConverter())
-            .and()
-            .and()
-            .oauth2Client();
+                .csrf()
+                .disable()
+                .authorizeRequests()
+                .antMatchers("/**").permitAll()
+                .and()
+                .anonymous()
+                .authorities(AuthorityConstant.ANONYMOUS.name())
+                .and()
+                .oauth2Login()
+                .and()
+                .logout()
+                .logoutSuccessHandler(oidcLogoutSuccessHandler())
+                .and()
+                .oauth2ResourceServer()
+                .jwt()
+                .jwtAuthenticationConverter(authenticationConverter())
+        ;
+    }
+
+    private LogoutSuccessHandler oidcLogoutSuccessHandler() {
+        OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
+                new OidcClientInitiatedLogoutSuccessHandler(
+                        this.clientRegistrationRepository);
+
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri(apgProperties.getUrl());
+
+        return oidcLogoutSuccessHandler;
     }
 
     Converter<Jwt, AbstractAuthenticationToken> authenticationConverter() {

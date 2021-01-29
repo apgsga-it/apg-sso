@@ -1,25 +1,20 @@
 package ch.apg.sso.ui;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
+import ch.apg.sso.security.ApgSecurityUtils;
+import ch.apg.sso.security.AuthorityConstant;
+import ch.apg.sso.user.UserService;
+import ch.apg.sso.user.dto.AccountDTO;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.apg.sso.security.ApgSecurityUtils;
-import ch.apg.sso.security.AuthorityConstant;
-import ch.apg.sso.user.UserService;
-import ch.apg.sso.user.dto.AccountDTO;
+import javax.annotation.PostConstruct;
+import java.util.stream.Collectors;
 
 @SpringComponent
 @SpringView(name = HomeView.VIEW_NAME)
@@ -44,8 +39,8 @@ public class HomeView extends VerticalLayout implements View {
         } else {
             AccountDTO accountDTO = userService.getCurrentAccount();
             addComponent(new Label(
-                String.format("Momentan ist der Benutzer %s mit den Berechtigungen %s angemeldet.",
-                              accountDTO.getUsername(), accountDTO.getAuthorities().stream().map(Enum::name).collect(Collectors.joining(", ")))
+                    String.format("Momentan ist der Benutzer %s mit den Berechtigungen %s angemeldet.",
+                            accountDTO.getUsername(), accountDTO.getAuthorities().stream().map(Enum::name).collect(Collectors.joining(", ")))
             ));
             if (ApgSecurityUtils.hasCurrentUserAnyAuthority(AuthorityConstant.VERKAUF)) {
                 addComponent(new Label("Da Sie die Rolle " + AuthorityConstant.VERKAUF.name() + " besitzen haben Zugriff auf weitere Funktionen."));
@@ -69,12 +64,7 @@ public class HomeView extends VerticalLayout implements View {
     }
 
     private void logout() {
-        Map<String, String> logoutDetails = userService.logout();
-        String logoutUrl = logoutDetails.get("logoutUrl");
-        String redirectUri = Page.getCurrent().getLocation().toString();
-        logoutUrl += "?redirect_uri=" + redirectUri;
-
         getUI().getSession().close();
-        getUI().getPage().setLocation(logoutUrl);
+        getUI().getPage().setLocation("/logout");
     }
 }

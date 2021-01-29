@@ -4,8 +4,6 @@ logging:
         ch.apg.sso: DEBUG
 
 spring:
-    profiles:
-        active: dev
     jackson:
         serialization:
             indent-output: true
@@ -14,6 +12,7 @@ spring:
 # APG specific properties
 # ===================================================================
 apg:
+    url: http://localhost:4200
     # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
     cors:
         allowed-origins: '*'

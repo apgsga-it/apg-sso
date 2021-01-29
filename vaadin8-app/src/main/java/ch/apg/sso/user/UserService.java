@@ -1,12 +1,7 @@
 package ch.apg.sso.user;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
+import ch.apg.sso.security.AuthorityConstant;
+import ch.apg.sso.user.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,12 +9,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import ch.apg.sso.security.AuthorityConstant;
-import ch.apg.sso.user.dto.AccountDTO;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -81,19 +77,5 @@ public class UserService {
         }
         account.setAuthorities(authorities.stream().map(grantedAuthority -> AuthorityConstant.valueOf(grantedAuthority.getAuthority())).collect(Collectors.toSet()));
         return account;
-    }
-
-    public Map<String, String> logout() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String logoutUrl = this.clientRegistration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString();
-
-        Map<String, String> logoutDetails = new HashMap<>();
-        logoutDetails.put("logoutUrl", logoutUrl);
-        logoutDetails.put("idToken", ((DefaultOidcUser) authentication.getPrincipal()).getIdToken().getTokenValue());
-
-        httpServletRequest.getSession().invalidate();
-
-        return logoutDetails;
     }
 }
