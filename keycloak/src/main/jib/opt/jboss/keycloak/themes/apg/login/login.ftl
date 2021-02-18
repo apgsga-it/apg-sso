@@ -1,7 +1,7 @@
 <#import "template.ftl" as layout>
 <@layout.registrationLayout displayInfo=social.displayInfo displayWide=(realm.password && social.providers??); section>
     <#if section = "header">
-        ${msg("doLogIn")}
+        ${msg("loginTitle")}
     <#elseif section = "form">
         <div id="kc-form" <#if realm.password && social.providers??>class="${properties.kcContentWrapperClass!}"</#if>>
             <div id="kc-form-wrapper" <#if realm.password && social.providers??>class="${properties.kcFormSocialAccountContentClass!} ${properties.kcFormSocialAccountClass!}"</#if>>
@@ -14,14 +14,14 @@
                             <#if usernameEditDisabled??>
                                 <input tabindex="1" id="username" class="${properties.kcInputClass!}" name="username" value="${(login.username!'')}" type="text" disabled/>
                             <#else>
-                                <input tabindex="1" id="username" class="${properties.kcInputClass!}" name="username" value="${(login.username!'')}" type="text" autofocus autocomplete="off"
+                                <input tabindex="1" id="username" class="${properties.kcInputClass!}" name="username" value="${(login.username!'')}" type="text" placeholder="${msg("usernameOrEmail")}" autofocus autocomplete="off"
                                        onkeyup="handleUsernameChange()"/>
                             </#if>
                         </div>
 
                         <div class="${properties.kcFormGroupClass!}">
                             <label for="password" class="${properties.kcLabelClass!}">${msg("password")}</label>
-                            <input tabindex="2" id="password" class="${properties.kcInputClass!}" name="password" type="password" autocomplete="off"/>
+                            <input tabindex="2" id="password" class="${properties.kcInputClass!}" name="password" type="password"  placeholder="${msg("password")}" autocomplete="off"/>
                         </div>
 
                         <div class="${properties.kcFormGroupClass!} ${properties.kcFormSettingClass!}">
@@ -44,16 +44,16 @@
                             <#--                                </#if>-->
                             <#--                            </div>-->
                             <div class="${properties.kcFormOptionsWrapperClass!}">
-                                <span><a tabindex="5" id="resetPasswordLink" href="${apg.resetPasswordUrl}">${msg("doForgotPassword")}</a></span>
+                                <span><a tabindex="5" id="resetPasswordLink" href="${apg.resetPasswordUrl}" target="_blank">${msg("doForgotPassword")}</a></span>
                             </div>
                             <div class="${properties.kcFormOptionsWrapperClass!}" style="display: none">
-                                <a id="resetPasswordLinkHidden" href="${apg.resetPasswordUrlWithoutUsername}">${msg("doForgotPassword")}</a>
+                                <a id="resetPasswordLinkHidden" href="${apg.resetPasswordUrlWithoutUsername}" target="_blank">${msg("doForgotPassword")}</a>
                             </div>
                             <div class="${properties.kcFormOptionsWrapperClass!}">
-                                <span><a tabindex="6" id="registrationLink" href="${apg.registrationUrl}">${msg("doRegister")}</a></span>
+                                <span><a tabindex="6" id="registrationLink" href="${apg.registrationUrl}" target="_blank">${msg("doRegister")}</a></span>
                             </div>
                             <div class="${properties.kcFormOptionsWrapperClass!}" style="display: none">
-                                <a tabindex="6" id="registrationLinkHidden" href="${apg.registrationUrlWithoutUsername}">${msg("doRegister")}</a>
+                                <a tabindex="6" id="registrationLinkHidden" href="${apg.registrationUrlWithoutUsername}" target="_blank">${msg("doRegister")}</a>
                             </div>
                         </div>
 
