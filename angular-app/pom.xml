@@ -18,24 +18,6 @@
     <name>APG|SGA SSO Angular App</name>
     <description>APG|SGA SSO Angular App</description>
 
-	<profiles>
-		<profile>
-			<id>docker-deploy</id>
-			<properties>
-				<build-type>dockerBuild</build-type>
-			</properties>
-		</profile>
-		<profile>
-			<id>tar-build</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<build-type>buildTar</build-type>
-			</properties>
-		</profile>
-	</profiles>
-
     <properties>
         <revision>0.1-SNAPSHOT</revision>
 
@@ -351,7 +333,7 @@
                     <execution>
                         <phase>package</phase>
                         <goals>
-							<goal>${build-type}</goal>
+                            <goal>dockerBuild</goal>
                         </goals>
                     </execution>
                 </executions>

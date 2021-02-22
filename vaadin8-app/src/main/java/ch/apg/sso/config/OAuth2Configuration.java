@@ -43,4 +43,5 @@ public class OAuth2Configuration {
                 .apply(oauth2Client.oauth2Configuration())
                 .build();
     }
+    
 }

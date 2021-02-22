@@ -19,8 +19,12 @@ spring:
                         user-name-attribute: preferred_username
                 registration:
                     keycloak:
-                        client-id: apg-sso-vaadin8-app
-                        client-secret: b69e33ac-57ef-4067-ab47-eff72b46368d
+                        client-id: apg-sso-app
+                        scope:
+                            - openid
+                            - profile
+                            - email
+                        authorization-grant-type: authorization_code
                         client-authentication-method: post
 
 server:

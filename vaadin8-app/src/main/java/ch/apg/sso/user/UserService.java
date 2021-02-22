@@ -69,12 +69,6 @@ public class UserService {
         if (attributes.get("email") != null) {
             account.setEmail(((String) attributes.get("email")).toLowerCase());
         }
-        if (attributes.get("subj-oid") != null) {
-            account.setSubjOid((String) attributes.get("subj-oid"));
-        }
-        if (attributes.get("gepard-nr") != null) {
-            account.setGepardNr((String) attributes.get("gepard-nr"));
-        }
         account.setAuthorities(authorities.stream().map(grantedAuthority -> AuthorityConstant.valueOf(grantedAuthority.getAuthority())).collect(Collectors.toSet()));
         return account;
     }

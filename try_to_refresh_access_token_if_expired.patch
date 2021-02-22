@@ -1,0 +1,191 @@
+Index: vaadin8-app/src/main/java/ch/apg/sso/config/WebSecurityConfiguration.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/vaadin8-app/src/main/java/ch/apg/sso/config/WebSecurityConfiguration.java b/vaadin8-app/src/main/java/ch/apg/sso/config/WebSecurityConfiguration.java
+--- a/vaadin8-app/src/main/java/ch/apg/sso/config/WebSecurityConfiguration.java	(revision 59974699719ad3590ee4e1dde4da19914c621ae3)
++++ b/vaadin8-app/src/main/java/ch/apg/sso/config/WebSecurityConfiguration.java	(date 1611598554895)
+@@ -108,4 +108,37 @@
+     GrantedAuthorityDefaults grantedAuthorityDefaults() {
+         return new GrantedAuthorityDefaults(StringUtils.EMPTY); // Remove the ROLE_ prefix
+     }
++
++    @Bean
++    public OAuth2AuthorizedClientManager authorizedClientManager(
++            ClientRegistrationRepository clientRegistrationRepository,
++            OAuth2AuthorizedClientRepository authorizedClientRepository) {
++
++        OAuth2AuthorizedClientProvider authorizedClientProvider =
++                OAuth2AuthorizedClientProviderBuilder.builder()
++                        .authorizationCode()
++                        .refreshToken()
++                        .build();
++
++        DefaultOAuth2AuthorizedClientManager authorizedClientManager =
++                new DefaultOAuth2AuthorizedClientManager(
++                        clientRegistrationRepository, authorizedClientRepository);
++
++        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
++
++        return authorizedClientManager;
++    }
++
++    @Bean
++    public WebClient webClient(OAuth2AuthorizedClientManager authorizedClientManager) {
++
++        ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2Client =
++                new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
++
++        oauth2Client.setDefaultClientRegistrationId("keycloak");
++
++        return WebClient.builder()
++                .apply(oauth2Client.oauth2Configuration())
++                .build();
++    }
+ }
+Index: vaadin8-app/src/main/java/ch/apg/sso/security/filter/AccessTokenRefreshFilter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/vaadin8-app/src/main/java/ch/apg/sso/security/filter/AccessTokenRefreshFilter.java b/vaadin8-app/src/main/java/ch/apg/sso/security/filter/AccessTokenRefreshFilter.java
+new file mode 100644
+--- /dev/null	(date 1611599529407)
++++ b/vaadin8-app/src/main/java/ch/apg/sso/security/filter/AccessTokenRefreshFilter.java	(date 1611599529407)
+@@ -0,0 +1,68 @@
++package ch.apg.sso.security.filter;
++
++import org.springframework.security.core.Authentication;
++import org.springframework.security.core.context.SecurityContextHolder;
++import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
++import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
++import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
++import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
++import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
++import org.springframework.security.oauth2.core.OAuth2AccessToken;
++import org.springframework.stereotype.Component;
++import org.springframework.web.filter.OncePerRequestFilter;
++import reactor.core.publisher.Mono;
++import reactor.core.scheduler.Schedulers;
++
++import javax.servlet.FilterChain;
++import javax.servlet.ServletException;
++import javax.servlet.http.HttpServletRequest;
++import javax.servlet.http.HttpServletResponse;
++import java.io.IOException;
++import java.time.Instant;
++
++@Component
++public class AccessTokenRefreshFilter extends OncePerRequestFilter {
++
++    private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
++
++    private final OAuth2AuthorizedClientManager authorizedClientManager;
++
++    public AccessTokenRefreshFilter(OAuth2AuthorizedClientService oAuth2AuthorizedClientService, OAuth2AuthorizedClientManager authorizedClientManager) {
++        this.oAuth2AuthorizedClientService = oAuth2AuthorizedClientService;
++        this.authorizedClientManager = authorizedClientManager;
++    }
++
++    @Override
++    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
++        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
++        if (authentication instanceof OAuth2AuthenticationToken) {
++            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
++            OAuth2AuthorizedClient authorizedClient = oAuth2AuthorizedClientService.loadAuthorizedClient(oauthToken.getAuthorizedClientRegistrationId(), oauthToken.getName());
++
++            OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
++
++            if (accessToken != null && accessToken.getExpiresAt() != null && Instant.now().isAfter(accessToken.getExpiresAt())) {
++                OAuth2AuthorizeRequest.Builder builder = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak").principal(authentication);
++                builder.attributes(attributes -> {
++                    attributes.put(HttpServletRequest.class.getName(), request);
++                    attributes.put(HttpServletResponse.class.getName(), response);
++                });
++                OAuth2AuthorizeRequest authorizeRequest = builder.build();
++
++                // NOTE:
++                // 'authorizedClientManager.authorize()' needs to be executed
++                // on a dedicated thread via subscribeOn(Schedulers.boundedElastic())
++                // since it performs a blocking I/O operation using RestTemplate internally
++                OAuth2AuthorizedClient refreshedAuthorizedClient = Mono.fromSupplier(() -> this.authorizedClientManager.authorize(authorizeRequest)).subscribeOn(Schedulers.boundedElastic()).block();
++
++                if (refreshedAuthorizedClient == null) {
++                    // TODO Error Handling
++                    SecurityContextHolder.clearContext();
++                    return;
++                }
++            }
++        }
++
++        filterChain.doFilter(request, response);
++    }
++}
+Index: vaadin8-app/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/vaadin8-app/pom.xml b/vaadin8-app/pom.xml
+--- a/vaadin8-app/pom.xml	(revision 59974699719ad3590ee4e1dde4da19914c621ae3)
++++ b/vaadin8-app/pom.xml	(date 1611592990375)
+@@ -84,11 +84,6 @@
+             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+         </dependency>
+         <dependency>
+-            <groupId>org.springframework.security.oauth</groupId>
+-            <artifactId>spring-security-oauth2</artifactId>
+-            <version>${spring-security-oauth2.version}</version>
+-        </dependency>
+-        <dependency>
+             <groupId>org.springframework.security</groupId>
+             <artifactId>spring-security-jwt</artifactId>
+             <version>${spring-security-jwt.version}</version>
+@@ -97,6 +92,11 @@
+             <groupId>org.apache.commons</groupId>
+             <artifactId>commons-lang3</artifactId>
+         </dependency>
++
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-webflux</artifactId>
++        </dependency>
+     </dependencies>
+ 
+     <build>
+@@ -188,11 +188,15 @@
+                 <configuration>
+                     <rules>
+                         <requireMavenVersion>
+-                            <message>You are running an older version of Maven. APG|SGA SSO requires at least Maven ${maven.version}</message>
++                            <message>You are running an older version of Maven. APG|SGA SSO requires at least Maven
++                                ${maven.version}
++                            </message>
+                             <version>[${maven.version},)</version>
+                         </requireMavenVersion>
+                         <requireJavaVersion>
+-                            <message>You are running an incompatible version of Java. APG|SGA SSO requires JDK ${java.version}</message>
++                            <message>You are running an incompatible version of Java. APG|SGA SSO requires JDK
++                                ${java.version}
++                            </message>
+                             <version>${java.version}</version>
+                         </requireJavaVersion>
+                     </rules>
+Index: vaadin8-app/src/main/resources/config/application.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/vaadin8-app/src/main/resources/config/application.yml b/vaadin8-app/src/main/resources/config/application.yml
+--- a/vaadin8-app/src/main/resources/config/application.yml	(revision 59974699719ad3590ee4e1dde4da19914c621ae3)
++++ b/vaadin8-app/src/main/resources/config/application.yml	(date 1611596088288)
+@@ -20,6 +20,8 @@
+                 registration:
+                     keycloak:
+                         client-id: apg-sso-vaadin8-app
++                        client-secret: cd02253c-f825-42e8-8d67-da2f36534651
++                        client-authentication-method: post
+ 
+ server:
+     port:

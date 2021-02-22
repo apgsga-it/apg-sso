@@ -37,9 +37,7 @@ public class SalesView extends VerticalLayout implements View {
 
         addComponent(new Label("Der Server hat folgende Daten zurückgegeben."));
         SalesConfigurationDTO salesConfigurationDTO = configurationService.getSalesConfiguration();
-        Label c = new Label(salesConfigurationDTO.toString());
-        c.setSizeFull();
-		addComponent(c);
+        addComponent(new Label(salesConfigurationDTO.toString()));
     }
 
     @Override
