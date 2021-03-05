@@ -3,6 +3,7 @@
     <#if section = "header">
         ${msg("loginTitle")}
     <#elseif section = "form">
+        <script>document.getElementById("kc-header").addEventListener('click', function(evt) {window.open('https://www.apgsga.ch', '_self')});</script>
         <div id="kc-form" <#if realm.password && social.providers??>class="${properties.kcContentWrapperClass!}"</#if>>
             <div id="kc-form-wrapper" <#if realm.password && social.providers??>class="${properties.kcFormSocialAccountContentClass!} ${properties.kcFormSocialAccountClass!}"</#if>>
                 <#if realm.password>
@@ -25,25 +26,7 @@
                         </div>
 
                         <div class="${properties.kcFormGroupClass!} ${properties.kcFormSettingClass!}">
-                            <#--                            <div id="kc-form-options">-->
-                            <#--                                <#if realm.rememberMe && !usernameEditDisabled??>-->
-                            <#--                                    <div class="checkbox">-->
-                            <#--                                        <label>-->
-                            <#--                                            <#if login.rememberMe??>-->
-                            <#--                                                <input tabindex="3" id="rememberMe" name="rememberMe" type="checkbox" checked> ${msg("rememberMe")}-->
-                            <#--                                            <#else>-->
-                            <#--                                                <input tabindex="3" id="rememberMe" name="rememberMe" type="checkbox"> ${msg("rememberMe")}-->
-                            <#--                                            </#if>-->
-                            <#--                                        </label>-->
-                            <#--                                    </div>-->
-                            <#--                                </#if>-->
-                            <#--                            </div>-->
-                            <#--                            <div class="${properties.kcFormOptionsWrapperClass!}">-->
-                            <#--                                <#if realm.resetPasswordAllowed>-->
-                            <#--                                    <span><a tabindex="5" href="${url.loginResetCredentialsUrl}">${msg("doForgotPassword")}</a></span>-->
-                            <#--                                </#if>-->
-                            <#--                            </div>-->
-                            <div class="${properties.kcFormOptionsWrapperClass!}">
+                             <div class="${properties.kcFormOptionsWrapperClass!}">
                                 <span><a tabindex="5" id="resetPasswordLink" href="${apg.resetPasswordUrl}" target="_blank">${msg("doForgotPassword")}</a></span>
                             </div>
                             <div class="${properties.kcFormOptionsWrapperClass!}" style="display: none">
